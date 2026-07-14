@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "student-ecommerce"
         TAG = "latest"
+        CONTAINER_NAME = "student-ecommerce-app"
     }
 
     stages {
@@ -29,9 +30,13 @@ pipeline {
 
         stage('Deploy Live Container') {
             steps {
-                echo 'Re-spawning application layers via Docker Compose...'
-                sh 'docker compose down'
-                sh 'docker compose up -d --build'
+                echo 'Cleaning up old container instance and starting fresh with native Docker...'
+                
+                // 1. Stop and remove the old container if it exists (ignoring errors if it doesn't exist yet)
+                sh "docker rm -f ${CONTAINER_NAME} || true"
+                
+                // 2. Run the newly built container on port 8080
+                sh "docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${IMAGE_NAME}:${TAG}"
             }
         }
     }
