@@ -27,14 +27,14 @@ pipeline {
             }
         }
 
-        stage('Deploy Live Container') {
+       stage('Deploy Live Container') {
             steps {
-                echo 'Re-spawning application layers via Docker Compose...'
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
+                echo 'Re-spawning application layers via Docker Compose V2...'
+                // Changed from 'docker-compose' to 'docker compose'
+                sh 'docker compose down'
+                sh 'docker compose up -d --build'
             }
         }
-    }
 
     post {
         success {
