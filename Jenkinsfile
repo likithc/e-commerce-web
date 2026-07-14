@@ -30,20 +30,20 @@ pipeline {
 
         stage('Deploy Live Container') {
             steps {
-                echo 'Cleaning up old container instance and starting fresh with native Docker...'
+                echo 'Cleaning up old container instance and starting fresh on port 8081...'
                 
-                // 1. Stop and remove the old container if it exists (ignoring errors if it doesn't exist yet)
+                // 1. Force stop/remove old container instance if it exists
                 sh "docker rm -f ${CONTAINER_NAME} || true"
                 
-                // 2. Run the newly built container on port 8080
-                sh "docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${IMAGE_NAME}:${TAG}"
+                // 2. Bind external port 8081 to internal container port 8080
+                sh "docker run -d --name ${CONTAINER_NAME} -p 8081:8080 ${IMAGE_NAME}:${TAG}"
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline finished. E-commerce application structure successfully deployed.'
+            echo 'Pipeline finished. E-commerce application successfully deployed on port 8081.'
         }
         failure {
             echo 'Build failed. Check the Jenkins console output log for errors.'
